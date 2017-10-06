@@ -47,6 +47,7 @@ public class TodoActivity extends AppCompatActivity {
         // check for saved state due to changes such as rotation or back button
         // and restore any saved state such as the todo index
         if (savedInstanceState != null) {
+            Log.d(TAG, "Loading mTodoIndex from bundle in onCreate");
             mTodoIndex = savedInstanceState.getInt(TODO_INDEX, 0);
         }
         TodoTextView.setText(mTodos[mTodoIndex]);
@@ -113,6 +114,7 @@ public class TodoActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(TAG, "Saving mTodoIndex in onSaveInstanceState");
         outState.putInt(TODO_INDEX, mTodoIndex);
     }
 }

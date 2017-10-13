@@ -1,6 +1,8 @@
 package com.example.c3469162.edbrooktodo;
 
+import android.content.Intent;
 import android.content.res.Resources;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,11 +18,18 @@ public class TodoActivity extends AppCompatActivity {
     // the alternative is to abstract view data to a ViewModel which can be in scope in all
     // Activity states and more suitable for larger amounts of data
     public static final String TODO_INDEX = "todo_index";
+    public static final String TODO_COMPLETE = "todo_complete";
+
+    private static final int IS_SUCCESS = 0;
+    private static final String IS_TODO_COMPLETE = "com.example.isTodoComplete";
 
     private static final String TAG = "TodoActivity";
 
     private String[] mTodos;
     private int mTodoIndex = 0;
+    boolean mIsTodoComplete = false;
+    private TextView mTodoText;
+    private TextView mTextViewComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +44,8 @@ public class TodoActivity extends AppCompatActivity {
         // the layout file is defined in the project res/layout/activity_todo.xml file
         setContentView(R.layout.activity_todo);
 
-        // initialize member TextView so we can manipulate it later
-        final TextView TodoTextView;
-        TodoTextView = (TextView) findViewById(R.id.textViewTodo);
+        // initialize member mTodoText so we can manipulate it later
+        mTodoText = (TextView) findViewById(R.id.textViewTodo);
 
         // read the todo array from res/values/strings.xml
         Resources res = getResources();
@@ -49,29 +57,58 @@ public class TodoActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             Log.d(TAG, "Loading mTodoIndex from bundle in onCreate");
             mTodoIndex = savedInstanceState.getInt(TODO_INDEX, 0);
+            mIsTodoComplete = savedInstanceState.getBoolean(TODO_COMPLETE, false);
         }
-        TodoTextView.setText(mTodos[mTodoIndex]);
+        mTodoText.setText(mTodos[mTodoIndex]);
+
+        mTextViewComplete = (TextView) findViewById(R.id.textViewComplete);
 
         Button buttonNext = (Button) findViewById(R.id.buttonNext);
         Button buttonPrev = (Button) findViewById(R.id.buttonPrev);
+        Button buttonDetail = (Button) findViewById(R.id.buttonDetail);
 
         // OnClick listener for the Next button
-        buttonNext.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                mTodoIndex = (mTodoIndex + 1) % mTodos.length;
-                TodoTextView.setText(mTodos[mTodoIndex]);
-            }
-        });
+        buttonNext.setOnClickListener(mNextListener);
 
         // OnClick listener for the Previous button
-        buttonPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mTodoIndex = --mTodoIndex < 0 ? mTodos.length - 1 : mTodoIndex;
-                TodoTextView.setText(mTodos[mTodoIndex]);
-            }
-        });
+        buttonPrev.setOnClickListener(mPreviousListener);
+
+        // OnClick listener for the Detail button
+        buttonDetail.setOnClickListener(mDetailListener);
+
+        updateTodoComplete(mIsTodoComplete);
+    }
+
+    private View.OnClickListener mNextListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            mTodoIndex = (mTodoIndex + 1) % mTodos.length;
+            mTodoText.setText(mTodos[mTodoIndex]);
+        }
+    };
+
+    private View.OnClickListener mPreviousListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mTodoIndex = --mTodoIndex < 0 ? mTodos.length - 1 : mTodoIndex;
+            mTodoText.setText(mTodos[mTodoIndex]);
+        }
+    };
+
+    private View.OnClickListener mDetailListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = TodoDetailActivity.newIntent(TodoActivity.this, mTodoIndex);
+            startActivityForResult(intent, IS_SUCCESS);
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == IS_SUCCESS) {
+            mIsTodoComplete = intent.getBooleanExtra(IS_TODO_COMPLETE, false);
+            updateTodoComplete(mIsTodoComplete);
+        }
     }
 
     @Override
@@ -116,5 +153,24 @@ public class TodoActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "Saving mTodoIndex in onSaveInstanceState");
         outState.putInt(TODO_INDEX, mTodoIndex);
+        outState.putBoolean(TODO_COMPLETE, mIsTodoComplete);
+
+    }
+
+    private void updateTodoComplete(boolean is_todo_complete) {
+        final TextView textViewTodo;
+        textViewTodo = (TextView) findViewById(R.id.textViewTodo);
+
+        if (is_todo_complete) {
+            textViewTodo.setBackgroundColor(
+                    ContextCompat.getColor(this, R.color.backgroundSuccess));
+            textViewTodo.setTextColor(
+                    ContextCompat.getColor(this, R.color.colorSuccess));
+            setTextViewComplete("\u2713");
+        }
+    }
+
+    private void setTextViewComplete( String message ){
+        mTextViewComplete.setText(message);
     }
 }

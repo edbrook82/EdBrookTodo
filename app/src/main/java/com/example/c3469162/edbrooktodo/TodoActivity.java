@@ -20,7 +20,7 @@ public class TodoActivity extends AppCompatActivity {
     public static final String TODO_INDEX = "todo_index";
     public static final String TODO_COMPLETE = "todo_complete";
 
-    private static final int IS_SUCCESS = 0;
+    private static final int DETAIL_TODO_RESPONSE = 0;
     private static final String IS_TODO_COMPLETE = "com.example.isTodoComplete";
 
     private static final String TAG = "TodoActivity";
@@ -99,13 +99,13 @@ public class TodoActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Intent intent = TodoDetailActivity.newIntent(TodoActivity.this, mTodoIndex);
-            startActivityForResult(intent, IS_SUCCESS);
+            startActivityForResult(intent, DETAIL_TODO_RESPONSE);
         }
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == IS_SUCCESS) {
+        if (resultCode == RESULT_OK && requestCode == DETAIL_TODO_RESPONSE) {
             mIsTodoComplete = intent.getBooleanExtra(IS_TODO_COMPLETE, false);
             updateTodoComplete(mIsTodoComplete);
         }

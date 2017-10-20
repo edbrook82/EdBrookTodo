@@ -1,18 +1,12 @@
 package com.example.c3469162.edbrooktodo;
 
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.c3469162.edbrooktodo.view.TodoFragment;
+
+import static com.example.c3469162.edbrooktodo.view.ManageFragments.loadFragmentIntoContainer;
 
 public class TodoActivity extends AppCompatActivity {
 
@@ -31,15 +25,7 @@ public class TodoActivity extends AppCompatActivity {
         // the layout file is defined in the project res/layout/activity_todo_fragment.xml file
         setContentView(R.layout.activity_todo_fragment);
 
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
-
-        if (fragment == null) {
-            fragment = new TodoFragment();
-            fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
-        }
+        loadFragmentIntoContainer(this, TodoFragment.class.getName(), R.id.fragment_container);
     }
 
     @Override

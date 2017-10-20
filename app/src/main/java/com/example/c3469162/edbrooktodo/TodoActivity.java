@@ -107,8 +107,13 @@ public class TodoActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK && requestCode == DETAIL_TODO_RESPONSE) {
             mIsTodoComplete = intent.getBooleanExtra(IS_TODO_COMPLETE, false);
-            updateTodoComplete(mIsTodoComplete);
+            Log.d(TAG, "onActivityResult: A");
+        } else {
+            Log.d(TAG, "onActivityResult: B");
+            mIsTodoComplete = false;
         }
+        Log.d(TAG, "onActivityResult: C");
+        updateTodoComplete(mIsTodoComplete);
     }
 
     @Override
@@ -167,6 +172,12 @@ public class TodoActivity extends AppCompatActivity {
             textViewTodo.setTextColor(
                     ContextCompat.getColor(this, R.color.colorSuccess));
             setTextViewComplete("\u2713");
+        } else {
+            textViewTodo.setBackgroundColor(
+                    ContextCompat.getColor(this, android.R.color.transparent));
+            textViewTodo.setTextColor(
+                    ContextCompat.getColor(this, android.R.color.primary_text_light));
+            setTextViewComplete("");
         }
     }
 

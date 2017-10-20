@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,14 +41,18 @@ public class TodoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "PC is in onCreate");
-        mTodo = new Todo();
+        Log.d(TAG, "PC is in onCreate: got savedState? " + (savedInstanceState != null));
+        if (savedInstanceState != null) {
+            mTodo = Todo.fromBundle(savedInstanceState);
+        } else {
+            mTodo = new Todo();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "PC is in onCreateView");
+        Log.d(TAG, "PC is in onCreateView: got savedState? " + (savedInstanceState != null));
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
 
         mEditTextTitle = (EditText) view.findViewById(R.id.todo_title);
@@ -134,5 +139,7 @@ public class TodoFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(TAG, "PC is in onSaveInstanceState");
+        outState.putAll(mTodo.asBundle());
     }
 }

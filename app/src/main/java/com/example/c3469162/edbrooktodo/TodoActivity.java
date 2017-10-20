@@ -1,14 +1,12 @@
 package com.example.c3469162.edbrooktodo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.example.c3469162.edbrooktodo.view.TodoFragment;
 
-import static com.example.c3469162.edbrooktodo.view.ManageFragments.loadFragmentIntoContainer;
-
-public class TodoActivity extends AppCompatActivity {
+public class TodoActivity extends SingleFragmentActivity {
 
     private static final String TAG = "TodoActivity";
 
@@ -25,7 +23,12 @@ public class TodoActivity extends AppCompatActivity {
         // the layout file is defined in the project res/layout/activity_todo_fragment.xml file
         setContentView(R.layout.activity_todo_fragment);
 
-        loadFragmentIntoContainer(this, TodoFragment.class.getName(), R.id.fragment_container);
+//        loadFragmentIntoContainer(this, TodoFragment.class.getName(), R.id.fragment_container);
+    }
+
+    @Override
+    Fragment getFragment() {
+        return new TodoFragment();
     }
 
     @Override
